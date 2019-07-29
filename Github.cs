@@ -5,7 +5,7 @@ using Octokit;
 
 namespace SDEGithubIntegration
 {
-  public class Github : IIntegrationClient<Task<Issue>>
+  public class Github : IIntegrationClient<Task<SDEIssue>>
   {
     GitHubClient githubClient;
     string githubUser;
@@ -39,7 +39,7 @@ namespace SDEGithubIntegration
       githubClient.Credentials = tokenAuth;
     }
 
-    public async Task<Issue> CreateIssue(SDETask task)
+    public async Task<SDEIssue> CreateIssue(SDETask task)
     {
       var createIssue = new NewIssue(title: task.title);
       createIssue.Body = task.description;
@@ -50,10 +50,10 @@ namespace SDEGithubIntegration
         name: GetRepoName(task.project),
         newIssue: createIssue);
 
-      return issue;
+      return CreateSDEIssue(issue);
     }
 
-    public async Task<Issue> UpdateIssue(SDETask task)
+    public async Task<SDEIssue> UpdateIssue(SDETask task)
     {
       var issue = await FindIssueFromTask(task);
 
@@ -73,7 +73,9 @@ namespace SDEGithubIntegration
           update.State = ItemState.Open;
         }
 
-        return await githubClient.Issue.Get(githubUser, GetRepoName(task.project), issue.Id);
+        var updatedIssue = await githubClient.Issue.Get(githubUser, GetRepoName(task.project), issue.Id);
+
+        return CreateSDEIssue(updatedIssue);
       }
 
       // if no issue is found, create the issue
@@ -101,6 +103,10 @@ namespace SDEGithubIntegration
     {
       string value;
       return projectToRepoMapping.TryGetValue(project, out value) ? value : DEFAULT_REPO;
+    }
+
+    private SDEIssue CreateSDEIssue(Issue issue) {
+      return new SDEIssue(issue.Id, issue.Title, issue.Body, issue.State.ToString());
     }
   }
 }
