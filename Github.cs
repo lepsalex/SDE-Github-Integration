@@ -12,7 +12,7 @@ namespace SDEGithubIntegration
     string githubUser;
     const string DEFAULT_REPO = "SDE-Github-Integration";
 
-    private readonly Dictionary<string, string> projectToRepoMapping = new Dictionary<string, string>() {
+    private readonly Dictionary<string, string> ProjectToRepoMapping = new Dictionary<string, string>() {
       {"awesome", DEFAULT_REPO},
       {"possum", DEFAULT_REPO},
       {"murder", DEFAULT_REPO},
@@ -46,13 +46,13 @@ namespace SDEGithubIntegration
 
     public async Task<SDEIssue> CreateIssue(SDETask task)
     {
-      var createIssue = new NewIssue(title: task.title);
-      createIssue.Body = task.description;
-      createIssue.Labels.Add(task.project);
+      var createIssue = new NewIssue(title: task.Title);
+      createIssue.Body = task.Description;
+      createIssue.Labels.Add(task.Project);
 
       var issue = await githubClient.Issue.Create(
         owner: githubUser,
-        name: GetRepoName(task.project),
+        name: GetRepoName(task.Project),
         newIssue: createIssue);
 
       return CreateSDEIssue(issue);
@@ -67,9 +67,9 @@ namespace SDEGithubIntegration
       {
         var update = issue.ToUpdate();
 
-        update.Body = task.description;
+        update.Body = task.Description;
 
-        if (task.status.Equals("Complete"))
+        if (task.Status.Equals("Complete"))
         {
           update.State = ItemState.Closed;
         }
@@ -78,7 +78,7 @@ namespace SDEGithubIntegration
           update.State = ItemState.Open;
         }
 
-        var updatedIssue = await githubClient.Issue.Get(githubUser, GetRepoName(task.project), issue.Id);
+        var updatedIssue = await githubClient.Issue.Get(githubUser, GetRepoName(task.Project), issue.Id);
 
         return CreateSDEIssue(updatedIssue);
       }
@@ -95,19 +95,19 @@ namespace SDEGithubIntegration
         State = ItemStateFilter.All,
       };
 
-      // Filter only for our project issues
-      taskIssueRequest.Labels.Add(task.project);
+      // Filter only for our Project issues
+      taskIssueRequest.Labels.Add(task.Project);
 
-      IReadOnlyList<Issue> issuesReadOnly = await githubClient.Issue.GetAllForRepository(githubUser, GetRepoName(task.project), taskIssueRequest);
+      IReadOnlyList<Issue> issuesReadOnly = await githubClient.Issue.GetAllForRepository(githubUser, GetRepoName(task.Project), taskIssueRequest);
       List<Issue> issues = (List<Issue>)issuesReadOnly;
 
-      return issues.Find(issue => issue.Title.Equals(task.title));
+      return issues.Find(issue => issue.Title.Equals(task.Title));
     }
 
-    private string GetRepoName(string project)
+    private string GetRepoName(string Project)
     {
       string value;
-      return projectToRepoMapping.TryGetValue(project, out value) ? value : DEFAULT_REPO;
+      return ProjectToRepoMapping.TryGetValue(Project, out value) ? value : DEFAULT_REPO;
     }
 
     private SDEIssue CreateSDEIssue(Issue issue) {
