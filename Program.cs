@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using dotenv.net;
 
 namespace SDEGithubIntegration
 {
@@ -6,7 +7,21 @@ namespace SDEGithubIntegration
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            DotEnv.Config();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            Log.Information("Program Start!");
+
+            var githubClient = new Github();
+            var sdeClient = new SDEClient(githubClient);
+
+            sdeClient.run();
+
+            Log.CloseAndFlush();
         }
     }
 }

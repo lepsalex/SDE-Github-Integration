@@ -1,5 +1,5 @@
-using System;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace SDEGithubIntegration
 {
@@ -10,6 +10,10 @@ namespace SDEGithubIntegration
     public SDEClient(IIntegrationClient<Task<SDEIssue>> integrationClient)
     {
       this.integrationClient = integrationClient;
+    }
+
+    public void run() {
+      Log.Information("SDE Client Start ...");
     }
   }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Octokit;
+using Serilog;
 
 namespace SDEGithubIntegration
 {
@@ -20,15 +21,17 @@ namespace SDEGithubIntegration
 
     public Github()
     {
+      Log.Information("Github Client Start ...");
+
       githubClient = new GitHubClient(new ProductHeaderValue("github-integration"));
-      githubUser = Environment.GetEnvironmentVariable("githubUser");
+      githubUser = Environment.GetEnvironmentVariable("GITHUB_USER");
 
       if (githubUser == null)
       {
         throw new NullReferenceException("No githubUser found in env!");
       }
 
-      var token = Environment.GetEnvironmentVariable("githubToken");
+      var token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
 
       if (token == null)
       {
@@ -37,6 +40,8 @@ namespace SDEGithubIntegration
 
       var tokenAuth = new Credentials(token); // use get env
       githubClient.Credentials = tokenAuth;
+
+      Log.Information("Github client connected!");
     }
 
     public async Task<SDEIssue> CreateIssue(SDETask task)
