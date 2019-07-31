@@ -15,8 +15,8 @@ namespace SDEIntegration
         IConsumer<Ignore, sdk.proto.Task> taskConsumer;
         IIntegrationClient<Task<SDEIssue>> integrationClient;
 
-        private const string CREATE_TOPIC_NAME = "sde-task-new";
-        private const string UPDATE_TOPIC_NAME = "sde-task-update";
+        private const string CREATE_TOPIC_NAME = "task-new";
+        private const string UPDATE_TOPIC_NAME = "task-update";
 
         public SDEClient(IIntegrationClient<Task<SDEIssue>> integrationClient)
         {

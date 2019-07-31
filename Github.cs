@@ -11,7 +11,7 @@ namespace SDEIntegration
   {
     GitHubClient githubClient;
     string githubUser;
-    const string DEFAULT_REPO = "lepsalex/SDE-Github-Integration";
+    const string DEFAULT_REPO = "SDE-Github-Integration";
 
     private readonly Dictionary<string, string> ProjectToRepoMapping = new Dictionary<string, string>() {
       {"awesome", DEFAULT_REPO},
@@ -79,7 +79,7 @@ namespace SDEIntegration
           update.State = ItemState.Open;
         }
 
-        var updatedIssue = await githubClient.Issue.Get(githubUser, GetRepoName(task.Project), issue.Id);
+        var updatedIssue = await githubClient.Issue.Update(githubUser, GetRepoName(task.Project), issue.Number, update);
 
         return CreateSDEIssue(updatedIssue);
       }
@@ -99,10 +99,11 @@ namespace SDEIntegration
       // Filter only for our Project issues
       taskIssueRequest.Labels.Add(task.Project);
 
-      IReadOnlyList<Issue> issuesReadOnly = await githubClient.Issue.GetAllForRepository(githubUser, GetRepoName(task.Project), taskIssueRequest);
-      List<Issue> issues = (List<Issue>)issuesReadOnly;
+      var issues = await githubClient.Issue.GetAllForRepository(githubUser, GetRepoName(task.Project), taskIssueRequest);
 
-      return issues.Find(issue => issue.Title.Equals(task.Title));
+      var newList = new List<Issue>(issues);
+
+      return newList.Find(issue => issue.Title.Equals(task.Title));
     }
 
     private string GetRepoName(string Project)
