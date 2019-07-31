@@ -53,8 +53,15 @@ namespace SDEIntegration
                 {
                     try
                     {
-                        var cr = taskConsumer.Consume(cts.Token);
-                        Log.Information($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
+                        var taskMsg = taskConsumer.Consume(cts.Token);
+
+                        if (taskMsg.Topic.Equals(CREATE_TOPIC_NAME)) {
+                            integrationClient.CreateIssue(taskMsg.Value);
+                        } else if (taskMsg.Topic.Equals(UPDATE_TOPIC_NAME)) {
+                            integrationClient.UpdateIssue(taskMsg.Value);
+                        }
+                        
+                        Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                     }
                     catch (ConsumeException e)
                     {
