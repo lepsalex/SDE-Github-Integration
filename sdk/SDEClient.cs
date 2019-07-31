@@ -12,12 +12,11 @@ namespace SDEIntegration
     public class SDEClient
     {
         ConsumerConfig consumerConfig;
-        IConsumer<int, sdk.proto.Task> taskConsumer;
-        IConsumer<int, sdk.proto.Task> updateConsumer;
+        IConsumer<Ignore, sdk.proto.Task> taskConsumer;
         IIntegrationClient<Task<SDEIssue>> integrationClient;
 
-        private const string CREATE_TOPIC_NAME = "task-new";
-        private const string UPDATE_TOPIC_NAME = "task-update";
+        private const string CREATE_TOPIC_NAME = "sde-task-new";
+        private const string UPDATE_TOPIC_NAME = "sde-task-update";
 
         public SDEClient(IIntegrationClient<Task<SDEIssue>> integrationClient)
         {
@@ -31,7 +30,7 @@ namespace SDEIntegration
               AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            taskConsumer = new ConsumerBuilder<int, sdk.proto.Task>(consumerConfig)
+            taskConsumer = new ConsumerBuilder<Ignore, sdk.proto.Task>(consumerConfig)
                             .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.Task>())
                             .Build();
             taskConsumer.Subscribe(new List<string>(){CREATE_TOPIC_NAME, UPDATE_TOPIC_NAME});

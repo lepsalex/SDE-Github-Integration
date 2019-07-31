@@ -11,7 +11,7 @@ namespace SDEIntegration
   {
     GitHubClient githubClient;
     string githubUser;
-    const string DEFAULT_REPO = "SDE-Github-Integration";
+    const string DEFAULT_REPO = "lepsalex/SDE-Github-Integration";
 
     private readonly Dictionary<string, string> ProjectToRepoMapping = new Dictionary<string, string>() {
       {"awesome", DEFAULT_REPO},
