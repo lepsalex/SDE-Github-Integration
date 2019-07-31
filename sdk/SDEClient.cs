@@ -1,16 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using SDEIntegration.sdk.dto;
+using SDEIntegration.sdk.proto;
 using Serilog;
 
-namespace SDEGithubIntegration
+namespace SDEIntegration
 {
     public class SDEClient
     {
         ConsumerConfig consumerConfig;
-        IConsumer<Ignore, string> createConsumer;
-        IConsumer<Ignore, string> updateConsumer;
+        IConsumer<int, sdk.proto.Task> taskConsumer;
+        IConsumer<int, sdk.proto.Task> updateConsumer;
         IIntegrationClient<Task<SDEIssue>> integrationClient;
 
         private const string CREATE_TOPIC_NAME = "task-new";
@@ -28,11 +31,10 @@ namespace SDEGithubIntegration
               AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            createConsumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
-            createConsumer.Subscribe(CREATE_TOPIC_NAME);
-
-            updateConsumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
-            updateConsumer.Subscribe(UPDATE_TOPIC_NAME);
+            taskConsumer = new ConsumerBuilder<int, sdk.proto.Task>(consumerConfig)
+                            .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.Task>())
+                            .Build();
+            taskConsumer.Subscribe(new List<string>(){CREATE_TOPIC_NAME, UPDATE_TOPIC_NAME});
         }
 
         public void run()
@@ -51,7 +53,7 @@ namespace SDEGithubIntegration
                 {
                     try
                     {
-                        var cr = createConsumer.Consume(cts.Token);
+                        var cr = taskConsumer.Consume(cts.Token);
                         Log.Information($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
                     }
                     catch (ConsumeException e)
@@ -63,7 +65,7 @@ namespace SDEGithubIntegration
             catch (OperationCanceledException)
             {
                 // Ensure the consumer leaves the group cleanly and final offsets are committed.
-                createConsumer.Close();
+                taskConsumer.Close();
             }
         }
     }

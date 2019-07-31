@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package SDEIntegration.sdk.proto;
+
+option csharp_namespace = "SDEIntegration.sdk.proto";
+
+message Task {
+    uint64 id = 1;
+    string project = 2;
+    string title = 3;
+    string description = 4;
+    string status = 5;
+}

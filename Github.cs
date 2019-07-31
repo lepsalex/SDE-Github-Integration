@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Octokit;
+using SDEIntegration.sdk.dto;
 using Serilog;
 
-namespace SDEGithubIntegration
+namespace SDEIntegration
 {
   public class Github : IIntegrationClient<Task<SDEIssue>>
   {
@@ -44,7 +45,7 @@ namespace SDEGithubIntegration
       Log.Information("Github client connected!");
     }
 
-    public async Task<SDEIssue> CreateIssue(SDETask task)
+    public async Task<SDEIssue> CreateIssue(sdk.proto.Task task)
     {
       var createIssue = new NewIssue(title: task.Title);
       createIssue.Body = task.Description;
@@ -58,7 +59,7 @@ namespace SDEGithubIntegration
       return CreateSDEIssue(issue);
     }
 
-    public async Task<SDEIssue> UpdateIssue(SDETask task)
+    public async Task<SDEIssue> UpdateIssue(sdk.proto.Task task)
     {
       var issue = await FindIssueFromTask(task);
 
@@ -87,7 +88,7 @@ namespace SDEGithubIntegration
       return await CreateIssue(task);
     }
 
-    private async Task<Issue> FindIssueFromTask(SDETask task)
+    private async Task<Issue> FindIssueFromTask(sdk.proto.Task task)
     {
       var taskIssueRequest = new RepositoryIssueRequest
       {

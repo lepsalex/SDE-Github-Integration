@@ -1,7 +1,7 @@
-namespace SDEGithubIntegration {
+namespace SDEIntegration {
   public interface IIntegrationClient<T> where T : class
   {
-      T CreateIssue(SDETask task);
-      T UpdateIssue(SDETask task);
+      T CreateIssue(sdk.proto.Task task);
+      T UpdateIssue(sdk.proto.Task task);
   }
 }

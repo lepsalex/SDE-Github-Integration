@@ -1,4 +1,4 @@
-namespace SDEGithubIntegration
+namespace SDEIntegration.sdk.dto
 {
   public class SDEIssue
   {

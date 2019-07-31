@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using dotenv.net;
 
-namespace SDEGithubIntegration
+namespace SDEIntegration
 {
     class Program
     {
