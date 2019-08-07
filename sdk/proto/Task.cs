@@ -26,12 +26,15 @@ namespace SDEIntegration.sdk.proto {
           string.Concat(
             "Cgp0YXNrLnByb3RvEhhTREVJbnRlZ3JhdGlvbi5zZGsucHJvdG8iVwoEVGFz",
             "axIKCgJpZBgBIAEoBBIPCgdwcm9qZWN0GAIgASgJEg0KBXRpdGxlGAMgASgJ",
-            "EhMKC2Rlc2NyaXB0aW9uGAQgASgJEg4KBnN0YXR1cxgFIAEoCUIbqgIYU0RF",
+            "EhMKC2Rlc2NyaXB0aW9uGAQgASgJEg4KBnN0YXR1cxgFIAEoCSJYCghUYXNr",
+            "Tm90ZRIUCgx0YXNrX3Byb2plY3QYASABKAkSEgoKdGFza190aXRsZRgCIAEo",
+            "CRIQCghvbGRfbm90ZRgDIAEoCRIQCghuZXdfbm90ZRgEIAEoCUIbqgIYU0RF",
             "SW50ZWdyYXRpb24uc2RrLnByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::SDEIntegration.sdk.proto.Task), global::SDEIntegration.sdk.proto.Task.Parser, new[]{ "Id", "Project", "Title", "Description", "Status" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::SDEIntegration.sdk.proto.Task), global::SDEIntegration.sdk.proto.Task.Parser, new[]{ "Id", "Project", "Title", "Description", "Status" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::SDEIntegration.sdk.proto.TaskNote), global::SDEIntegration.sdk.proto.TaskNote.Parser, new[]{ "TaskProject", "TaskTitle", "OldNote", "NewNote" }, null, null, null)
           }));
     }
     #endregion
@@ -271,6 +274,219 @@ namespace SDEIntegration.sdk.proto {
           }
           case 42: {
             Status = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class TaskNote : pb::IMessage<TaskNote> {
+    private static readonly pb::MessageParser<TaskNote> _parser = new pb::MessageParser<TaskNote>(() => new TaskNote());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<TaskNote> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::SDEIntegration.sdk.proto.TaskReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TaskNote() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TaskNote(TaskNote other) : this() {
+      taskProject_ = other.taskProject_;
+      taskTitle_ = other.taskTitle_;
+      oldNote_ = other.oldNote_;
+      newNote_ = other.newNote_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TaskNote Clone() {
+      return new TaskNote(this);
+    }
+
+    /// <summary>Field number for the "task_project" field.</summary>
+    public const int TaskProjectFieldNumber = 1;
+    private string taskProject_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string TaskProject {
+      get { return taskProject_; }
+      set {
+        taskProject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "task_title" field.</summary>
+    public const int TaskTitleFieldNumber = 2;
+    private string taskTitle_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string TaskTitle {
+      get { return taskTitle_; }
+      set {
+        taskTitle_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "old_note" field.</summary>
+    public const int OldNoteFieldNumber = 3;
+    private string oldNote_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string OldNote {
+      get { return oldNote_; }
+      set {
+        oldNote_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "new_note" field.</summary>
+    public const int NewNoteFieldNumber = 4;
+    private string newNote_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string NewNote {
+      get { return newNote_; }
+      set {
+        newNote_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as TaskNote);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(TaskNote other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (TaskProject != other.TaskProject) return false;
+      if (TaskTitle != other.TaskTitle) return false;
+      if (OldNote != other.OldNote) return false;
+      if (NewNote != other.NewNote) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (TaskProject.Length != 0) hash ^= TaskProject.GetHashCode();
+      if (TaskTitle.Length != 0) hash ^= TaskTitle.GetHashCode();
+      if (OldNote.Length != 0) hash ^= OldNote.GetHashCode();
+      if (NewNote.Length != 0) hash ^= NewNote.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (TaskProject.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(TaskProject);
+      }
+      if (TaskTitle.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(TaskTitle);
+      }
+      if (OldNote.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(OldNote);
+      }
+      if (NewNote.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(NewNote);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (TaskProject.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(TaskProject);
+      }
+      if (TaskTitle.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(TaskTitle);
+      }
+      if (OldNote.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(OldNote);
+      }
+      if (NewNote.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(NewNote);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(TaskNote other) {
+      if (other == null) {
+        return;
+      }
+      if (other.TaskProject.Length != 0) {
+        TaskProject = other.TaskProject;
+      }
+      if (other.TaskTitle.Length != 0) {
+        TaskTitle = other.TaskTitle;
+      }
+      if (other.OldNote.Length != 0) {
+        OldNote = other.OldNote;
+      }
+      if (other.NewNote.Length != 0) {
+        NewNote = other.NewNote;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            TaskProject = input.ReadString();
+            break;
+          }
+          case 18: {
+            TaskTitle = input.ReadString();
+            break;
+          }
+          case 26: {
+            OldNote = input.ReadString();
+            break;
+          }
+          case 34: {
+            NewNote = input.ReadString();
             break;
           }
         }

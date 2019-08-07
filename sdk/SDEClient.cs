@@ -13,12 +13,13 @@ namespace SDEIntegration
     {
         ConsumerConfig consumerConfig;
         IConsumer<Ignore, sdk.proto.Task> taskConsumer;
-        IIntegrationClient<Task<SDEIssue>> integrationClient;
+        IIntegrationClient<Task<SDEIssue>, Task<SDENote>> integrationClient;
 
         private const string CREATE_TOPIC_NAME = "task-new";
         private const string UPDATE_TOPIC_NAME = "task-update";
+        private const string ADD_NOTE_TOPIC_NAME = "task-note-new";
 
-        public SDEClient(IIntegrationClient<Task<SDEIssue>> integrationClient)
+        public SDEClient(IIntegrationClient<Task<SDEIssue>, Task<SDENote>> integrationClient)
         {
             this.integrationClient = integrationClient;
 
@@ -58,6 +59,8 @@ namespace SDEIntegration
                             integrationClient.CreateIssue(taskMsg.Value);
                         } else if (taskMsg.Topic.Equals(UPDATE_TOPIC_NAME)) {
                             integrationClient.UpdateIssue(taskMsg.Value);
+                        } else if (taskMsg.Topic.Equals(ADD_NOTE_TOPIC_NAME)) {
+                            integrationClient.CreateIssueNote(taskMsg.Value);
                         }
                         
                         Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
@@ -73,6 +76,10 @@ namespace SDEIntegration
                 // Ensure the consumer leaves the group cleanly and final offsets are committed.
                 taskConsumer.Close();
             }
+        }
+
+        private System.Threading.Tasks.Task startConsumer(List<string> topics, ProtobufDeserializer<?> deserializer) {
+
         }
     }
 }

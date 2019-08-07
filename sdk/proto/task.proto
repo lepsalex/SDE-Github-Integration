@@ -11,3 +11,10 @@ message Task {
     string description = 4;
     string status = 5;
 }
+
+message TaskNote {
+    string task_project = 1;
+    string task_title = 2;
+    string old_note = 3;
+    string new_note = 4;
+}
