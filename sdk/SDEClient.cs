@@ -58,50 +58,49 @@ namespace SDEIntegration
 
             var consumers = new System.Threading.Tasks.Task[] { startTaskConsumer(cts), startTaskNoteConsumer(cts) };
 
-            try
-            {
-                System.Threading.Tasks.Task.WaitAll(consumers, cts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                // Ensure the consumers leaves the group cleanly and final offsets are committed.
-                taskConsumer.Close();
-                taskNoteConsumer.Close();
-                Log.Information("All Consumers closed!");
-            }
-
+            System.Threading.Tasks.Task.WaitAll(consumers);
         }
 
         private System.Threading.Tasks.Task startTaskConsumer(CancellationTokenSource cts)
         {
             Log.Information("Task Consumer listening ...");
 
-            return new System.Threading.Tasks.Task(() =>
+            return System.Threading.Tasks.Task.Run(() =>
             {
-                while (true)
+                try
                 {
-                    Log.Information("Waiting for Task message ...");
-
-                    try
+                    while (true)
                     {
-                        var taskMsg = taskConsumer.Consume(cts.Token);
+                        Log.Information("Waiting for Task message ...");
 
-                        if (taskMsg.Topic.Equals(CREATE_TOPIC_NAME))
+                        try
                         {
-                            integrationClient.CreateIssue(taskMsg.Value);
-                        }
-                        else if (taskMsg.Topic.Equals(UPDATE_TOPIC_NAME))
-                        {
-                            integrationClient.UpdateIssue(taskMsg.Value);
-                        }
+                            var taskMsg = taskConsumer.Consume(cts.Token);
 
-                        Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
-                    }
-                    catch (ConsumeException e)
-                    {
-                        Log.Error($"Error occurred: {e.Error.Reason}");
+                            if (taskMsg.Topic.Equals(CREATE_TOPIC_NAME))
+                            {
+                                integrationClient.CreateIssue(taskMsg.Value);
+                            }
+                            else if (taskMsg.Topic.Equals(UPDATE_TOPIC_NAME))
+                            {
+                                integrationClient.UpdateIssue(taskMsg.Value);
+                            }
+
+                            Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
+                        }
+                        catch (ConsumeException e)
+                        {
+                            Log.Error($"Error occurred: {e.Error.Reason}");
+                        }
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    // Ensure the consumer leaves the group cleanly and final offsets are committed.
+                    taskConsumer.Close();
+                    Log.Information("Task Consumer closed!");
+                }
+
             });
         }
 
@@ -109,23 +108,33 @@ namespace SDEIntegration
         {
             Log.Information("Task Note Consumer listening ...");
 
-            return new System.Threading.Tasks.Task(() =>
+            return System.Threading.Tasks.Task.Run(() =>
             {
-                while (true)
+                try
                 {
-                    Log.Information("Waiting for Task Note message ...");
+                    while (true)
+                    {
+                        Log.Information("Waiting for Task Note message ...");
 
-                    try
-                    {
-                        var taskMsg = taskNoteConsumer.Consume(cts.Token);
-                        integrationClient.CreateIssueNote(taskMsg.Value);
-                        Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
-                    }
-                    catch (ConsumeException e)
-                    {
-                        Log.Error($"Error occurred: {e.Error.Reason}");
+                        try
+                        {
+                            var taskMsg = taskNoteConsumer.Consume(cts.Token);
+                            integrationClient.CreateIssueNote(taskMsg.Value);
+                            Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
+                        }
+                        catch (ConsumeException e)
+                        {
+                            Log.Error($"Error occurred: {e.Error.Reason}");
+                        }
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    // Ensure the consumer leaves the group cleanly and final offsets are committed.
+                    taskNoteConsumer.Close();
+                    Log.Information("Task Note Consumer closed!");
+                }
+
             });
         }
     }
