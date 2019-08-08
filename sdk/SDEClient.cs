@@ -63,6 +63,11 @@ namespace SDEIntegration
             consumers.Add(startTaskNoteConsumer(ct));
 
             System.Threading.Tasks.Task.WaitAll(consumers.ToArray());
+
+            // https://github.com/confluentinc/confluent-kafka-dotnet/issues/310
+            // When we close our two consumers we have a brief idle period in the
+            // main thread which throws a `1/1 brokers are down` error, this is
+            // normal and will eventually be changed to INFO instead of ERROR
         }
 
         private System.Threading.Tasks.Task startTaskConsumer(CancellationToken ct)
