@@ -50,23 +50,27 @@ namespace SDEIntegration
             Log.Information("SDE Client Start!");
 
             CancellationTokenSource cts = new CancellationTokenSource();
+            var ct = cts.Token;
+
             Console.CancelKeyPress += (_, e) =>
             {
                 e.Cancel = true; // prevent the process from terminating.
                 cts.Cancel();
             };
 
-            var consumers = new System.Threading.Tasks.Task[] { startTaskConsumer(cts), startTaskNoteConsumer(cts) };
+            var consumers = new List<System.Threading.Tasks.Task>();
+            consumers.Add(startTaskConsumer(ct));
+            consumers.Add(startTaskNoteConsumer(ct));
 
-            System.Threading.Tasks.Task.WaitAll(consumers);
+            System.Threading.Tasks.Task.WaitAll(consumers.ToArray());
         }
 
-        private System.Threading.Tasks.Task startTaskConsumer(CancellationTokenSource cts)
+        private System.Threading.Tasks.Task startTaskConsumer(CancellationToken ct)
         {
-            Log.Information("Task Consumer listening ...");
-
-            return System.Threading.Tasks.Task.Run(() =>
+            return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
+                Log.Information("Task Consumer listening ...");
+
                 try
                 {
                     while (true)
@@ -75,7 +79,7 @@ namespace SDEIntegration
 
                         try
                         {
-                            var taskMsg = taskConsumer.Consume(cts.Token);
+                            var taskMsg = taskConsumer.Consume(ct);
 
                             if (taskMsg.Topic.Equals(CREATE_TOPIC_NAME))
                             {
@@ -100,16 +104,15 @@ namespace SDEIntegration
                     taskConsumer.Close();
                     Log.Information("Task Consumer closed!");
                 }
-
             });
         }
 
-        private System.Threading.Tasks.Task startTaskNoteConsumer(CancellationTokenSource cts)
+        private System.Threading.Tasks.Task startTaskNoteConsumer(CancellationToken ct)
         {
-            Log.Information("Task Note Consumer listening ...");
-
-            return System.Threading.Tasks.Task.Run(() =>
+            return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
+                Log.Information("Task Note Consumer listening ...");
+
                 try
                 {
                     while (true)
@@ -118,7 +121,7 @@ namespace SDEIntegration
 
                         try
                         {
-                            var taskMsg = taskNoteConsumer.Consume(cts.Token);
+                            var taskMsg = taskNoteConsumer.Consume(ct);
                             integrationClient.CreateIssueNote(taskMsg.Value);
                             Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                         }
@@ -134,7 +137,6 @@ namespace SDEIntegration
                     taskNoteConsumer.Close();
                     Log.Information("Task Note Consumer closed!");
                 }
-
             });
         }
     }
