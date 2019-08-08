@@ -155,8 +155,16 @@ namespace SDEIntegration
 
         private System.Threading.Tasks.Task phoneHome(CancellationToken ct)
         {
-            // Do something with etcd here
-            return null;
+            // Register
+            etcdClient.Put("/_etcd/registry/github", "{\"name\": \"GitHub\", \"type\": \"Issue Tracker\"}");
+
+            // Heartbeat
+            return System.Threading.Tasks.Task.Factory.StartNew(() => {
+                while (true) {
+                    etcdClient.Put("/heartbeat/github", "1");
+                    Thread.Sleep(5000);
+                }
+            }, ct);
         }
     }
 }
