@@ -11,5 +11,6 @@
     <PackageReference Include="dotenv.net" Version="1.0.6"/>
     <PackageReference Include="Confluent.Kafka" Version="1.1.0"/>
     <PackageReference Include="Google.Protobuf" Version="3.9.0"/>
+    <PackageReference Include="dotnet-etcd" Version="2.3.1"/>
   </ItemGroup>
 </Project>

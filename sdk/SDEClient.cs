@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using dotnet_etcd;
 using SDEIntegration.sdk.dto;
 using SDEIntegration.sdk.proto;
 using Serilog;
@@ -15,6 +16,7 @@ namespace SDEIntegration
         IConsumer<Ignore, sdk.proto.Task> taskConsumer;
         IConsumer<Ignore, sdk.proto.TaskNote> taskNoteConsumer;
         IIntegrationClient<Task<SDEIssue>, Task<SDENote>> integrationClient;
+        EtcdClient etcdClient;
 
         private const string CREATE_TOPIC_NAME = "task-new";
         private const string UPDATE_TOPIC_NAME = "task-update";
@@ -24,22 +26,27 @@ namespace SDEIntegration
         {
             this.integrationClient = integrationClient;
 
+            var etcdHost = Environment.GetEnvironmentVariable("ETCD_HOST");
+            var etcdPort = Environment.GetEnvironmentVariable("ETCD_PORT");
+
+            this.etcdClient = new EtcdClient(etcdHost, Int32.Parse(etcdPort));
+
             var serviceUrl = Environment.GetEnvironmentVariable("SERVICE_URL");
 
-            consumerConfig = new ConsumerConfig
+            this.consumerConfig = new ConsumerConfig
             {
                 GroupId = "github-integration",
                 BootstrapServers = serviceUrl != null ? serviceUrl : "localhost:9092",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            taskConsumer = new ConsumerBuilder<Ignore, sdk.proto.Task>(consumerConfig)
+            this.taskConsumer = new ConsumerBuilder<Ignore, sdk.proto.Task>(consumerConfig)
                             .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.Task>())
                             .Build();
 
-            taskNoteConsumer = new ConsumerBuilder<Ignore, sdk.proto.TaskNote>(consumerConfig)
-                            .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.TaskNote>())
-                            .Build();
+            this.taskNoteConsumer = new ConsumerBuilder<Ignore, sdk.proto.TaskNote>(consumerConfig)
+                             .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.TaskNote>())
+                             .Build();
 
             taskConsumer.Subscribe(new List<string>() { CREATE_TOPIC_NAME, UPDATE_TOPIC_NAME });
             taskNoteConsumer.Subscribe(ADD_NOTE_TOPIC_NAME);
@@ -58,11 +65,12 @@ namespace SDEIntegration
                 cts.Cancel();
             };
 
-            var consumers = new List<System.Threading.Tasks.Task>();
-            consumers.Add(startTaskConsumer(ct));
-            consumers.Add(startTaskNoteConsumer(ct));
+            var tasks = new List<System.Threading.Tasks.Task>();
+            tasks.Add(startTaskConsumer(ct));
+            tasks.Add(startTaskNoteConsumer(ct));
+            tasks.Add(phoneHome(ct));
 
-            System.Threading.Tasks.Task.WaitAll(consumers.ToArray());
+            System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
 
             // https://github.com/confluentinc/confluent-kafka-dotnet/issues/310
             // When we close our two consumers we have a brief idle period in the
@@ -143,6 +151,12 @@ namespace SDEIntegration
                     Log.Information("Task Note Consumer closed!");
                 }
             });
+        }
+
+        private System.Threading.Tasks.Task phoneHome(CancellationToken ct)
+        {
+            // Do something with etcd here
+            return null;
         }
     }
 }
