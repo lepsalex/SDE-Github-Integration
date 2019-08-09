@@ -148,20 +148,25 @@ namespace SDEIntegration
       // Heartbeat
       return System.Threading.Tasks.Task.Factory.StartNew(async () =>
       {
+        
+        const string KEY = "/heartbeat/github";
+        const string VAL = "1";
+        const int TTL = 10;
+
         while (!ct.IsCancellationRequested)
         {
           Log.Information("Heartbeat ...");
 
           try
           {
-            await etcdClient.SetNodeAsync("/heartbeat/github", "1");
+            await etcdClient.SetNodeAsync(KEY, VAL, ttl: TTL);
           }
           catch (EtcdGenericException ex)
           {
             Log.Error("Error sending heartbeat to ETCD registry: ", ex.Message);
           }
 
-          Thread.Sleep(5000);
+          await System.Threading.Tasks.Task.Delay(TTL / 2 * 1000);
         }
       }, ct);
     }
