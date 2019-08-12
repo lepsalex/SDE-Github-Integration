@@ -1,0 +1,4 @@
+- For task messages it may be a good idea to set a producer key equal to something like project name,
+  this will dictate how kafka partitions its topics and ultimately how consumers consume, this will
+  help ensuring that ordering is maintained while not impacting speed as multiple consumers would become
+  responsible for projects
