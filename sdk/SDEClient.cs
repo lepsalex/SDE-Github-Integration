@@ -190,7 +190,8 @@ namespace SDEIntegration
                        .SetValueDeserializer(new ProtobufDeserializer<sdk.proto.TaskNote>())
                        .Build();
 
-      taskConsumer.Subscribe(new List<string>() { CREATE_TOPIC_NAME, UPDATE_TOPIC_NAME });
+      // Use HashSet as we want to ensure no duplicate topic registration
+      taskConsumer.Subscribe(new HashSet<string>() { CREATE_TOPIC_NAME, UPDATE_TOPIC_NAME });
       taskNoteConsumer.Subscribe(ADD_NOTE_TOPIC_NAME);
     }
 
