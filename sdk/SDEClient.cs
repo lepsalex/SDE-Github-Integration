@@ -56,7 +56,7 @@ namespace SDEIntegration
                 GroupId = "github-integration",
                 BootstrapServers = serviceUrl != null ? serviceUrl : "localhost:9092",
                 AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoCommit = false
+                EnableAutoOffsetStore = false
             };
 
             this.taskConsumer = new ConsumerBuilder<Ignore, sdk.proto.Task>(consumerConfig)
@@ -130,7 +130,7 @@ namespace SDEIntegration
                                 // do something more with this than just error (dead-letter queue?)
                             }
 
-                            taskNoteConsumer.Commit();
+                            taskConsumer.StoreOffset(taskMsg);
                             Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                         }
                         catch (ConsumeException e)
@@ -171,7 +171,7 @@ namespace SDEIntegration
                                 // do something more with this than just error (dead-letter queue?)
                             }
                             
-                            taskNoteConsumer.Commit();
+                            taskNoteConsumer.StoreOffset(taskMsg);
                             Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                         }
                         catch (ConsumeException e)
