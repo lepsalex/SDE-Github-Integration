@@ -46,7 +46,30 @@ namespace SDEIntegration
               {"9001", defaultRepo}
             };
 
+            // think about what happens when webhooks are not possible, how do we simulate this
+            // registerHooks();
+
             Log.Information("Github client connected!");
+        }
+
+        public void registerHooks()
+        {
+            var hookConfig = new NewRepositoryHook("web", new Dictionary<string, string>() {
+              {"url", "https://example.com/webhook"}, // host this webhook on this app (tbd)
+              {"content_type", "json"},
+              {"insecure_ssl", "0"}
+            });
+
+            hookConfig.Events = new HashSet<string>() { "issues", "issue_comment" };
+
+            foreach (var repo in projectToRepoMapping.Values)
+            {
+                using (var hook = githubClient.Repository.Hooks.Create(githubUser, repo, hookConfig))
+                {
+                    // register some sort of hook delete when application shutsdown from here
+                    // githubClient.Repository.Hooks.Delete(githubUser, defaultRepo, hook.Id);
+                }
+            }
         }
 
         public async Task<SDEIssue> CreateIssue(sdk.proto.Task task)
