@@ -68,6 +68,9 @@ namespace SDEIntegration
                 {
                     // register some sort of hook delete when application shutsdown from here
                     // githubClient.Repository.Hooks.Delete(githubUser, defaultRepo, hook.Id);
+
+                    // NOTE: when handling the hook event we should see if we can identify events coming
+                    // from this application as to ignore them.
                 }
             }
         }
