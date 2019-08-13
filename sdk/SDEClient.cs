@@ -129,11 +129,8 @@ namespace SDEIntegration
                                 Log.Error($"Could not save issue for message: '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'");
                                 // do something more with this than just error (dead-letter queue?)
                             }
-                            else
-                            {
-                                taskNoteConsumer.Commit();
-                            }
 
+                            taskNoteConsumer.Commit();
                             Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                         }
                         catch (ConsumeException e)
@@ -173,11 +170,8 @@ namespace SDEIntegration
                                 Log.Error($"Could not save note for message: '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'");
                                 // do something more with this than just error (dead-letter queue?)
                             }
-                            else
-                            {
-                                taskNoteConsumer.Commit();
-                            }
-
+                            
+                            taskNoteConsumer.Commit();
                             Log.Information($"Consumed message '{taskMsg.Value}' at: '{taskMsg.TopicPartitionOffset}'.");
                         }
                         catch (ConsumeException e)
