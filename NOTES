@@ -3,4 +3,4 @@
   help ensuring that ordering is maintained while not impacting speed as multiple consumers would become
   responsible for projects
 
-- Will need to set auto-commit to false for consumer and handle this accordingly to ensure 100% processing
+- Will need to set auto-commit to false for consumer and handle this accordingly to ensure 100% processing (or EnableAutoOffsetStore)

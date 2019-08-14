@@ -8,21 +8,21 @@ using SDEIntegration.sdk.dto;
 using SDEIntegration.sdk.proto;
 using Serilog;
 
-namespace SDEIntegration
+namespace SDEIntegration.sdk
 {
     public class SDEClient
     {
         ConsumerConfig consumerConfig;
         IConsumer<Ignore, sdk.proto.Task> taskConsumer;
         IConsumer<Ignore, sdk.proto.TaskNote> taskNoteConsumer;
-        IIntegrationClient<Task<SDEIssue>, Task<SDENote>> integrationClient;
+        IIntegrationClient<SDEIssue, SDENote> integrationClient;
         EtcdClient etcdClient;
 
         private const string CREATE_TOPIC_NAME = "task-new";
         private const string UPDATE_TOPIC_NAME = "task-update";
         private const string ADD_NOTE_TOPIC_NAME = "task-note-new";
 
-        public SDEClient(IIntegrationClient<Task<SDEIssue>, Task<SDENote>> integrationClient)
+        public SDEClient(IIntegrationClient<SDEIssue, SDENote> integrationClient)
         {
             this.integrationClient = integrationClient;
 

@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using dotenv.net;
+using SDEIntegration.sdk;
 
 namespace SDEIntegration
 {

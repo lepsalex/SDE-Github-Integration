@@ -7,7 +7,7 @@ using Serilog;
 
 namespace SDEIntegration
 {
-    public class Github : IIntegrationClient<Task<SDEIssue>, Task<SDENote>>
+    public class Github : IIntegrationClient<SDEIssue, SDENote>
     {
         GitHubClient githubClient;
         string githubUser;
@@ -142,6 +142,18 @@ namespace SDEIntegration
             var note = await githubClient.Issue.Comment.Create(githubUser, GetRepoName(taskNote.TaskProject), issue.Number, taskNote.NewNote);
 
             return CreateSDENote(taskNote.TaskProject, taskNote.TaskTitle, note);
+        }
+
+        public void OnIssueCreateHook(SDEIssue issue) {
+            
+        }
+
+        public void OnIssueUpdateHook(SDEIssue issue) {
+            
+        }
+
+        public void OnIssueNoteCreateHook(SDENote issue) {
+            
         }
 
         private async Task<Issue> FindIssue(sdk.proto.Task task)
