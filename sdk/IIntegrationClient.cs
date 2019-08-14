@@ -5,6 +5,7 @@ namespace SDEIntegration {
   {
       Task<T> CreateIssue(sdk.proto.Task task);
       Task<T> UpdateIssue(sdk.proto.Task task);
+      Task<T> RemoveIssue(sdk.proto.Task task);
       Task<I> CreateIssueNote(sdk.proto.TaskNote taskNote);
 
       void OnIssueCreateHook(T issue);
