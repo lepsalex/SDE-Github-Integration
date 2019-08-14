@@ -13,6 +13,7 @@ namespace SDEIntegration
     string githubUser;
     string defaultRepo;
     Dictionary<string, string> projectToRepoMapping;
+    Boolean hooksEnabled = false;
 
     public Github()
     {
@@ -47,15 +48,21 @@ namespace SDEIntegration
             };
 
       // think about what happens when webhooks are not possible, how do we simulate this
-      // registerHooks();
+      var hooksUrl = Environment.GetEnvironmentVariable("HOOKS_URL");
+
+      if (hooksUrl != null)
+      {
+        registerHooks(hooksUrl);
+        hooksEnabled = true;
+      }
 
       Log.Information("Github client connected!");
     }
 
-    public void registerHooks()
+    public void registerHooks(string url)
     {
       var hookConfig = new NewRepositoryHook("web", new Dictionary<string, string>() {
-              {"url", "https://example.com/webhook"}, // host this webhook on this app (tbd)
+              {"url", url}, // host this webhook on this app (tbd)
               {"content_type", "json"},
               {"insecure_ssl", "0"}
             });
