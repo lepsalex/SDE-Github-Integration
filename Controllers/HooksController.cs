@@ -14,18 +14,14 @@ namespace GithubIntegration.Controllers
     [ApiController]
     public class HooksController : ControllerBase
     {
+        Hooks hooks = new Hooks();
 
         // POST api/hooks
         [HttpPost]
         public void ReceiveWebHook([FromBody] string value)
         {
-            // Map JSON string to object
             var payload = JsonConvert.DeserializeObject<IssueEventPayload>(value);
-
-            Log.Information("Action: ", payload.Action);
-            Log.Information("Issue: ", payload.Issue);
-            Log.Information("Repository: ", payload.Repository);
-            Log.Information("Sender: ", payload.Sender);
+            hooks.Process(payload);
         }
     }
 }
