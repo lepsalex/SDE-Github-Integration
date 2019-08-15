@@ -1,15 +1,18 @@
 using System.Threading.Tasks;
 
-namespace SDEIntegration {
-  public interface IIntegrationClient<T, I>
-  {
-      Task<T> CreateIssue(sdk.proto.Task task);
-      Task<T> UpdateIssue(sdk.proto.Task task);
-      Task<T> RemoveIssue(sdk.proto.Task task);
-      Task<I> CreateIssueNote(sdk.proto.TaskNote taskNote);
+using SDETaskProto = SDEIntegration.sdk.proto.Task;
+using SDETaskNoteProto = SDEIntegration.sdk.proto.TaskNote;
 
-      void OnIssueCreateHook(T issue);
-      void OnIssueUpdateHook(T issue);
-      void OnIssueNoteCreateHook(I issue);
-  }
+namespace SDEIntegration
+{
+    public interface IIntegrationClient<T, I>
+    {
+        string GroupId { get; }
+        bool HooksEnabled { get; }
+
+        Task<T> CreateTask(SDETaskProto task);
+        Task<T> UpdateTask(SDETaskProto task);
+        Task<T> RemoveTask(SDETaskProto task);
+        Task<I> CreateTaskNote(SDETaskNoteProto taskNote);
+    }
 }

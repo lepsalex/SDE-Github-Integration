@@ -2,7 +2,7 @@
 using dotenv.net;
 using SDEIntegration.sdk;
 
-namespace SDEIntegration
+namespace GithubIntegration
 {
     class Program
     {

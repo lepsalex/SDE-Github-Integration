@@ -1,13 +1,13 @@
 namespace SDEIntegration.sdk.dto
 {
-  public class SDEIssue
+  public class SDETask
   {
     public long Id { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public string Status { get; set; }
 
-    public SDEIssue(long id, string title, string description, string status)
+    public SDETask(long id, string title, string description, string status)
     {
       this.Id = id;
       this.Title = title;
