@@ -132,7 +132,7 @@ namespace SDEIntegration.sdk
             sdeClientEvents.onTaskCreateHook += OnTaskCreateHook;
         }
 
-        public void run()
+        public void Run()
         {
             Log.Information("SDE Client Start!");
 
@@ -146,9 +146,9 @@ namespace SDEIntegration.sdk
             };
 
             var tasks = new List<Task>();
-            tasks.Add(startTaskConsumer(ct));
-            tasks.Add(startTaskNoteConsumer(ct));
-            tasks.Add(phoneHome(ct));
+            tasks.Add(StartTaskConsumer(ct));
+            tasks.Add(StartTaskNoteConsumer(ct));
+            tasks.Add(PhoneHome(ct));
 
             Task.WaitAll(tasks.ToArray());
 
@@ -158,7 +158,7 @@ namespace SDEIntegration.sdk
             // normal and will eventually be changed to INFO instead of ERROR
         }
 
-        private Task startTaskConsumer(CancellationToken ct)
+        private Task StartTaskConsumer(CancellationToken ct)
         {
             return Task.Factory.StartNew(async () =>
             {
@@ -212,7 +212,7 @@ namespace SDEIntegration.sdk
             });
         }
 
-        private Task startTaskNoteConsumer(CancellationToken ct)
+        private Task StartTaskNoteConsumer(CancellationToken ct)
         {
             return Task.Factory.StartNew(async () =>
             {
@@ -253,7 +253,7 @@ namespace SDEIntegration.sdk
             });
         }
 
-        private async Task<Task> phoneHome(CancellationToken ct)
+        private async Task<Task> PhoneHome(CancellationToken ct)
         {
             // Register
             try

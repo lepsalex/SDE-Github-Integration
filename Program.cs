@@ -1,6 +1,10 @@
 ﻿using Serilog;
 using dotenv.net;
 using SDEIntegration.sdk;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
 
 namespace GithubIntegration
 {
@@ -20,9 +24,33 @@ namespace GithubIntegration
             var githubClient = new Github();
             var sdeClient = new SDEClient(githubClient);
 
-            sdeClient.run();
+            var tasks = new List<Task>();
+            tasks.Add(RunSDEClient(sdeClient));
+            tasks.Add(RunWebHost(args));
+
+            Task.WaitAll(tasks.ToArray());
 
             Log.CloseAndFlush();
         }
+
+        static Task RunSDEClient(SDEClient sdeClient)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                sdeClient.Run();
+            });
+        }
+
+        static Task RunWebHost(string[] args)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                CreateWebHostBuilder(args).Build().Run();
+            });
+        }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>();
     }
 }
