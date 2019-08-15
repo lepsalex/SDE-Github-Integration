@@ -18,9 +18,12 @@ namespace SDEIntegration.sdk
     public class SDEClient
     {
         string serviceUrl;
+
         IConsumer<Ignore, SDETaskProto> taskConsumer;
         IConsumer<Ignore, SDETaskNoteProto> taskNoteConsumer;
         IProducer<Ignore, SDETaskProto> taskProducer;
+        IProducer<Ignore, SDETaskNoteProto> taskNoteProducer;
+
         IIntegrationClient<SDETask, SDETaskNote> integrationClient;
         EtcdClient etcdClient;
         TaskEvents sdeClientEvents;
@@ -29,6 +32,10 @@ namespace SDEIntegration.sdk
         private const string UPDATE_TOPIC_NAME = "task-update";
         private const string REMOVE_TOPIC_NAME = "task-delete";
         private const string ADD_NOTE_TOPIC_NAME = "task-note-new";
+
+        private const string INGRESS_CREATE_TOPIC_NAME = "ingres-task-new";
+        private const string INGRESS_UPDATE_TOPIC_NAME = "ingres-task-update";
+        private const string INGRESS_ADD_NOTE_TOPIC_NAME = "ingres-task-note-new";
 
         public SDEClient(IIntegrationClient<SDETask, SDETaskNote> integrationClient)
         {
@@ -110,8 +117,13 @@ namespace SDEIntegration.sdk
                 BootstrapServers = serviceUrl
             };
 
+            // Create producers
             this.taskProducer = new ProducerBuilder<Ignore, SDETaskProto>(producerConfig)
                                     .SetValueSerializer(new ProtobufSerializer<SDETaskProto>())
+                                    .Build();
+
+            this.taskNoteProducer = new ProducerBuilder<Ignore, SDETaskNoteProto>(producerConfig)
+                                    .SetValueSerializer(new ProtobufSerializer<SDETaskNoteProto>())
                                     .Build();
 
             // register callback when events are triggered
@@ -280,20 +292,40 @@ namespace SDEIntegration.sdk
             }, ct);
         }
 
-        private void OnTaskCreateHook(SDETask task)
+        private async void OnTaskCreateHook(SDETask task)
         {
+            Log.Information("Task Created Event Received from Hook!");
 
+            try {
+                var dr = await taskProducer.ProduceAsync(INGRESS_CREATE_TOPIC_NAME, new Message<Ignore, SDETaskProto>() { Value = task });
+                Log.Information($"Task Created message successfully delivered: '{dr.Value}' to '{dr.TopicPartitionOffset}'");
+            } catch (ProduceException<Null, string> e) {
+                Log.Error($"Task Created message delivery failed! {e.Error.Reason}");
+            }
         }
 
-        private void OnTaskUpdateHook(SDETask task)
+        private async void OnTaskUpdateHook(SDETask task)
         {
+            Log.Information("Task Updated Event Received from Hook!");
 
+            try {
+                var dr = await taskProducer.ProduceAsync(INGRESS_UPDATE_TOPIC_NAME, new Message<Ignore, SDETaskProto>() { Value = task });
+                Log.Information($"Task Updated message successfully delivered: '{dr.Value}' to '{dr.TopicPartitionOffset}'");
+            } catch (ProduceException<Null, string> e) {
+                Log.Error($"Task Updated message delivery failed! {e.Error.Reason}");
+            }
         }
 
-        private void OnTaskNoteCreateHook(SDETaskNote note)
+        private async void OnTaskNoteCreateHook(SDETaskNote note)
         {
+            Log.Information("Task Note Created Event Received from Hook!");
 
+            try {
+                var dr = await taskNoteProducer.ProduceAsync(INGRESS_ADD_NOTE_TOPIC_NAME, new Message<Ignore, SDETaskNoteProto>() { Value = note });
+                Log.Information($"Task Note Created message successfully delivered: '{dr.Value}' to '{dr.TopicPartitionOffset}'");
+            } catch (ProduceException<Null, string> e) {
+                Log.Error($"Task Note Created message delivery failed! {e.Error.Reason}");
+            }
         }
-
     }
 }
