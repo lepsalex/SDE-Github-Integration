@@ -5,7 +5,7 @@ using SDETaskNoteProto = SDEIntegration.sdk.proto.TaskNote;
 
 namespace SDEIntegration
 {
-    public interface IIntegrationClient<T, I>
+    public interface IIntegrationClient<T, N>
     {
         string GroupId { get; }
         bool HooksEnabled { get; }
@@ -13,6 +13,6 @@ namespace SDEIntegration
         Task<T> CreateTask(SDETaskProto task);
         Task<T> UpdateTask(SDETaskProto task);
         Task<T> RemoveTask(SDETaskProto task);
-        Task<I> CreateTaskNote(SDETaskNoteProto taskNote);
+        Task<N> CreateTaskNote(SDETaskNoteProto taskNote);
     }
 }

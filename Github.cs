@@ -77,6 +77,7 @@ namespace GithubIntegration
 
             foreach (var repo in projectToRepoMapping.Values)
             {
+                // make set of repos so not to duplicate
                 using (var hook = githubClient.Repository.Hooks.Create(githubUser, repo, hookConfig))
                 {
                     // register some sort of hook delete when application shutsdown from here

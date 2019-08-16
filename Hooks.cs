@@ -29,10 +29,12 @@ namespace GithubIntegration
             Log.Information("Issue: ", payload.Issue);
             Log.Information("Repository: ", payload.Repository);
 
+            // convert github issue to SDE dto objects
+
             // trigger events
-            // sdeClientEvents.TriggerTaskCreated();
-            // sdeClientEvents.TriggerTaskUpdate();
-            // sdeClientEvents.TriggerTaskNoteCreate();
+            // sdeClientEvents.TriggerTaskCreated(sdeTask);
+            // sdeClientEvents.TriggerTaskUpdate(sdeTask);
+            // sdeClientEvents.TriggerTaskNoteCreate(sdeTaskNote);
         }
     }
 }
